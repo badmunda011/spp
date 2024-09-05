@@ -1,0 +1,53 @@
+{
+    "name": "BadX - BadMundaX",
+    "description": "A Pyrogram Based Spam Bots, Fast And Stable",
+    "logo": "https://telegra.ph/file/ec832fc9107fd21edfee3.jpg",
+    "keywords": [
+        "telegram",
+        "PYROGRAM",
+        "telegram-bot",
+        "SpamX",
+        "BadX"
+    ],
+    "repository": "https://github.com/Badhacker98/Spam_X_bot",
+    "website": "https://github.com/Badhacker98",
+    "success_url": "https://t.me/HEROKUBIN_01",
+    "env": {
+        "API_ID": {
+            "description": "Fill Api ID Take this value from My.telegram.org",
+            "value": "",
+            "required": true
+        },
+        "API_HASH": {
+            "description": "Fill Api hash Take this value from My.telegram.org",
+            "value": "",
+            "required": true
+        },
+        "ASSISTANT_TOKEN": {
+            "description": "Bot token od assistant!",
+            "value": "",
+            "required": true
+        },
+        "OWNER_ID": {
+            "description": "Owner ID",
+            "value": "",
+            "required": true
+        },
+        "LOGGER_ID": {
+            "description": "Logs Group ID (Make A Private Group And Add Your All Spam id Their)",
+            "value": "",
+            "required": true
+        },
+        "DATABASE_URL": {
+            "description": "Fill MongoDB database url. get from mongodb.com",
+            "value": "",
+            "required": true
+        }
+
+    },
+    "buildpacks":[
+        {
+            "url": "heroku/python"
+        }
+    ]
+}

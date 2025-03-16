@@ -5,6 +5,7 @@ from BadX.config import API_ID, API_HASH
 from BadX.functions.keyboard import gen_inline_keyboard
 
 from pyrogram import Client, filters
+from pyrogram.types import WebAppInfo
 from pyrogram.types import (
     Message,
     ReplyKeyboardRemove,
@@ -22,7 +23,7 @@ from pyrogram.errors import (
 
 
 @Client.on_message(
-    filters.regex("🔸 Get All Clients 🔸") & filters.private #& filters.user(TheBadX.sudo.sudoUsers)
+    filters.regex("🔸 Get All Clients 🔸") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)
 )
 async def get_all_clients(_, message: Message):
     if await TheBadX.sudo.sudoFilter(message, 2):
@@ -40,6 +41,7 @@ async def get_all_clients(_, message: Message):
     clientText += f"\n **Total: {clientNo}**, __For full details type /get (user ID)__"
     await message.reply(clientText)
     await wait.delete()
+
 
 @Client.on_message(
     filters.private & filters.command("get")
@@ -81,8 +83,9 @@ async def get_client(_, message: Message):
         await message.reply(f"__No any active client with user ID - {user_id}.__")
     await wait.delete()
 
+
 @Client.on_message(
-    filters.regex("➕ New Client") & filters.private #& filters.user(TheBadX.sudo.sudoUsers)
+    filters.regex("➕ New Client") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)
 )
 async def new_session(_, message: Message):
     await message.reply_text(
@@ -104,15 +107,16 @@ async def new_session(_, message: Message):
         reply_markup=InlineKeyboardMarkup(buttons),
     )
 
-@Client.on_message(
-    filters.regex("➕ Add Client") & filters.private #& filters.user(TheBadX.sudo.sudoUsers)
-)
-async def session_add(_, message: Message):
-    await message.reply_text("/add {ᴘᴀsᴛᴇ ʏᴏᴜʀ ᴘʏ2 sᴇssɪᴏɴ} ✓ ❤️")  
-    
 
 @Client.on_message(
-    filters.regex("Remove Client ➖") & filters.private #& filters.user(TheBadX.sudo.sudoUsers)
+    filters.regex("➕ Add Client") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)
+)
+async def session_add(_, message: Message):
+    await message.reply_text("/add {ᴘᴀsᴛᴇ ʏᴏᴜʀ ᴘʏ2 sᴇssɪᴏɴ} ✓ ❤️")
+
+
+@Client.on_message(
+    filters.regex("Remove Client ➖") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)
 )
 async def remove_client(_, message: Message):
     if await TheBadX.sudo.sudoFilter(message, 1):
@@ -141,8 +145,9 @@ async def remove_client(_, message: Message):
     )
     await process.delete()
 
+
 @Client.on_message(
-    filters.regex("🔐 Get Access Of Client") & filters.private #& filters.user(TheBadX.sudo.sudoUsers)
+    filters.regex("🔐 Get Access Of Client") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)
 )
 async def get_access(_, message: Message):
     if await TheBadX.sudo.sudoFilter(message, 1):
@@ -168,6 +173,7 @@ async def get_access(_, message: Message):
         reply_markup=InlineKeyboardMarkup(buttons),
     )
     await process.delete()
+
 
 @Client.on_callback_query(filters.regex("client:.*$"))
 async def clientCallbacks(_, callback: CallbackQuery):
@@ -368,4 +374,4 @@ async def clientCallbacks(_, callback: CallbackQuery):
                     )
                 )
             except:
-                await callback.
+                await callback.message.delete()

@@ -1,1 +1,1 @@
-from BadX.functions.clients import TheBadX
+from BadX.functions.clients import TheBotX

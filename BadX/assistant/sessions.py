@@ -219,6 +219,11 @@ async def get_otp_for_user(_, message: Message):
 async def session_add(_, message: Message):
     await message.reply_text("/add {ᴘᴀsᴛᴇ ʏᴏᴜʀ ᴘʏ2 sᴇssɪᴏɴ} ✓ ❤️")
 
+@Client.on_message(
+    filters.regex("➕ Add Bot Client") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)
+)
+async def session_add(_, message: Message):
+    await message.reply_text("/add {ᴘᴀsᴛᴇ ʏᴏᴜʀ ʙᴏᴛ ᴛᴏᴋᴇɴ} ✓ ❤️")
 
 @Client.on_message(
     filters.regex("Remove Client ➖") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)

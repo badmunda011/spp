@@ -2,10 +2,10 @@ import random
 from pyrogram import Client, filters
 from pyrogram.types import Message, CallbackQuery
 
-# Initialize the bot
-
 # Import TheBotX module
 from . import TheBotX
+
+app = TheBotX.BotX  # Define the app object using TheBotX.BotX
 
 @app.on_message(
     filters.command(

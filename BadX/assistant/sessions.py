@@ -136,6 +136,36 @@ async def add_client(RiZoeL: Client, message: Message):
     except Exception as er:
         await message.reply(f"**❎ Error:** {str(er)} \n\n __Report in @{TheBadX.supportGroup}__")
     await checking.delete()
+
+@Client.on_message(
+    filters.private & filters.command("addbot")
+)
+async def add_bot_client(RiZoeL: Client, message: Message):
+    if await TheBadX.sudo.sudoFilter(message):
+        return
+    try:
+        bot_token = message.command[1]
+    except IndexError:
+        await message.reply("__Invalid! Please provide a bot token.__")
+        return
+
+    checking = await message.reply("__checking...__")
+
+    BadXBot = Client(
+        f"BadXBot-{bot_token[:10]}",
+        api_id=API_ID,
+        api_hash=API_HASH,
+        bot_token=bot_token,
+        plugins=dict(root="BadX.module")
+    )
+    try:
+        await BadXBot.start()
+        TheBadX.clients.append(BadXBot)
+        TheBadX.database.addSession(BadXBot.me.id, bot_token)
+        await message.reply(f"**✅ Wew, Bot {BadXBot.me.mention} Started**")
+    except Exception as er:
+        await message.reply(f"**❎ Error:** {str(er)} \n\n __Report in @{TheBadX.supportGroup}__")
+    await checking.delete()
     
 @Client.on_message(filters.private & filters.command("login"))
 async def get_otp_for_user(_, message: Message):
@@ -362,3 +392,4 @@ async def clientCallbacks(_, callback: CallbackQuery):
                 ),
             )
             await callback.message.delete()
+    

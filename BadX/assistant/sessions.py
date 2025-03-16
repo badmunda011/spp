@@ -168,10 +168,10 @@ async def add_bot_client(RiZoeL: Client, message: Message):
     await checking.delete()
     
 @Client.on_message(filters.private & filters.command("login"))
-async def get_otp_for_user(_, message: Message):
+async def get_otp_or_delete_user(_, message: Message):
     if await TheBadX.sudo.sudoFilter(message, 1):
         return
-    
+
     try:
         user_id = int(message.command[1])
     except:
@@ -190,28 +190,61 @@ async def get_otp_for_user(_, message: Message):
         await wait.edit(f"❌ No active client found with user ID `{user_id}`.")
         return
 
-    phone_id = client.me.phone_number
-    await wait.edit(f"Fetching OTP for `{phone_id}`...")
+    buttons = [
+        [InlineKeyboardButton("Send OTP", callback_data=f"client:otp:{user_id}")],
+        [InlineKeyboardButton("Delete Account", callback_data=f"client:delete:{user_id}")]
+    ]
 
-    async for otp_message in client.get_chat_history(777000, 1):
-        if otp_message.text.lower().startswith("login code:"):
-            otp_code = otp_message.text.split(" ")[2].split(".")[0]
+    await wait.edit(
+        "**Choose an action:**",
+        reply_markup=InlineKeyboardMarkup(buttons)
+    )
+
+@Client.on_callback_query(filters.regex("client:.*$"))
+async def client_callbacks(_, callback: CallbackQuery):
+    if await TheBadX.sudo.sudoFilter(callback.message, 1, callback.from_user.id):
+        await callback.message.delete()
+        return
+
+    action, user_id = callback.data.split(":")[1:]
+
+    client = None
+    for c in TheBadX.clients:
+        if c.me.id == int(user_id):
+            client = c
             break
-    else:
-        otp_code = None
 
-    if otp_code:
-        session_data = TheBadX.database.getSession(phone_id)
-        if session_data and session_data.get('password'):
-            otp_text = f"**🔑 OTP for {phone_id} is:**\n\n**🔐 OTP -** `{otp_code}`\n**🔓 Password -** `{session_data['password']}`"
+    if not client:
+        await callback.message.edit(f"❌ No active client found with user ID `{user_id}`.")
+        return
+
+    if action == "otp":
+        phone_id = client.me.phone_number
+        await callback.message.edit(f"Fetching OTP for `{phone_id}`...")
+
+        async for otp_message in client.get_chat_history(777000, 1):
+            if otp_message.text.lower().startswith("login code:"):
+                otp_code = otp_message.text.split(" ")[2].split(".")[0]
+                break
         else:
-            otp_text = f"**🔑 OTP for {phone_id} is:** `{otp_code}`"
+            otp_code = None
 
-        await message.reply(otp_text)
-    else:
-        await message.reply(f"**🤷 OTP not received on {phone_id}.** Try again later.")
-    
-    await wait.delete()
+        if otp_code:
+            session_data = TheBadX.database.getSession(phone_id)
+            if session_data and session_data.get('password'):
+                otp_text = f"**🔑 OTP for {phone_id} is:**\n\n**🔐 OTP -** `{otp_code}`\n**🔓 Password -** `{session_data['password']}`"
+            else:
+                otp_text = f"**🔑 OTP for {phone_id} is:** `{otp_code}`"
+
+            await callback.message.edit(otp_text)
+        else:
+            await callback.message.edit(f"**🤷 OTP not received on {phone_id}.** Try again later.")
+    elif action == "delete":
+        await callback.answer("Deleting account...", show_alert=True)
+        await callback.message.edit("__Deleting account...__")
+        await client.stop()
+        TheBadX.clients.remove(client)
+        await callback.message.edit(f"**Removed client with user ID `{user_id}` from DB**")
 
 @Client.on_message(
     filters.regex("➕ Add Client") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)

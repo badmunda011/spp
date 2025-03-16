@@ -22,7 +22,6 @@ from BadX.config import (
     API_ID,
     API_HASH,
     ASSISTANT_TOKEN,
-    BOT_TOKEN,
     LOGGER_ID,
     OWNER_ID,
     HANDLER,
@@ -245,7 +244,7 @@ class BotX(Client):
             "BotX Assistant",
             api_id=API_ID,
             api_hash=API_HASH,
-            bot_token=BOT_TOKEN,
+            bot_token=ASSISTANT_TOKEN,
             plugins=dict(root="BadX.assistant")
         )
         self.database = dataBase

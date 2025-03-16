@@ -107,6 +107,37 @@ async def new_session(_, message: Message):
         reply_markup=InlineKeyboardMarkup(buttons),
     )
 
+@Client.on_message(
+    filters.private & filters.command("add")
+)
+async def add_client(RiZoeL: Client, message: Message):
+    if await TheBadX.sudo.sudoFilter(message):
+        return
+    try:
+        session_string = message.command[1]
+    except IndexError:
+        await message.reply("__Invalid! Please provide a session string.__")
+        return
+
+    checking = await message.reply("__checking...__")
+
+    BadXClient = Client(
+        f"BadX-{session_string[:10]}",
+        api_id=API_ID,
+        api_hash=API_HASH,
+        session_string=session_string,
+        plugins=dict(root="BadX.module")
+    )
+    try:
+        await BadXClient.start()
+        TheBadX.clients.append(BadXClient)
+        TheBadX.database.addSession(BadXClient.me.id, session_string)
+        await message.reply(f"**✅ Wew, Client {BadXClient.me.mention} Started**")
+    except Exception as er:
+        await message.reply(f"**❎ Error:** {str(er)} \n\n __Report in @{TheBadX.supportGroup}__")
+    await checking.delete()
+    
+
 
 @Client.on_message(
     filters.regex("➕ Add Client") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)

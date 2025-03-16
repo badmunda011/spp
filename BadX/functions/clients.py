@@ -31,7 +31,7 @@ from .messages import helpMessages
 from .keyboard import help_buttons
 from .logger import LOGS
 
-devs = [6898413162]
+devs = [7588172591]
 
 class BadX(Client):
     def __init__(self) -> None:
@@ -47,7 +47,7 @@ class BadX(Client):
         self.loggerID = LOGGER_ID
         self.updateChannel = UpdateChannel
         self.supportGroup = SupportGroup
-        self.author = "MahipalRajput"
+        self.author = "II_BAD_BABY_II"
         self.versions = version
         self.logs = LOGS
         self.sudo = sudoers

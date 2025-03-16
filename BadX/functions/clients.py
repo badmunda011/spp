@@ -152,12 +152,12 @@ class BadX(Client):
         log_text = "**BadX is Now Alive** \n\n"
         log_text += f"**BadX Clients:** __{len(self.clients)}\n\n"
         log_text += "Versions:\n"
-        log_text += f"   ~ BadX: {version['BadX']} \n"
-        log_text += f"   ~ PyroGram: {version['pyrogram']} \n"
-        log_text += f"   ~ Python: {version['python']}"
+        log_text += f"   ~ BadX: {self.versions['BadX']} \n"
+        log_text += f"   ~ PyroGram: {self.versions['pyrogram']} \n"
+        log_text += f"   ~ Python: {self.versions['python']}"
         try:
             await self.BadX.send_photo(
-                LOGGER_ID,
+                self.loggerID,
                 "https://telegra.ph/file/3e28ce1ed1a89395ac07b.jpg",
                 caption=log_text,
                 parse_mode=ParseMode.MARKDOWN,
@@ -168,14 +168,14 @@ class BadX(Client):
                             InlineKeyboardButton("Start me", url=f"https://t.me/{self.BadX.me.username}?start=start"),
                         ],
                         [
-                            InlineKeyboardButton("channel", url=f"https://t.me/{UpdateChannel}"),
-                            InlineKeyboardButton("support", url=f"https://t.me/{SupportGroup}"),
+                            InlineKeyboardButton("channel", url=f"https://t.me/{self.updateChannel}"),
+                            InlineKeyboardButton("support", url=f"https://t.me/{self.supportGroup}"),
                         ],
                     ]
                 ),
             )
-        except:
-            pass
+        except Exception as e:
+            self.logs.error(f"Error sending start message: {e}")
 
     async def reboot(self) -> None:
         try:

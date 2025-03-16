@@ -25,6 +25,9 @@ manage_clients_keyboard = ReplyKeyboardMarkup(
             KeyboardButton("🔸 Get All Clients 🔸")
         ],
         [
+            KeyboardButton("➕ New Client")
+        ],
+        [
             KeyboardButton("➕ Add Client"),
             KeyboardButton("Remove Client ➖")
         ],

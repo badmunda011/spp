@@ -4,8 +4,8 @@ from pyrogram.types import Message, CallbackQuery
 
 # Initialize the bot
 
-# Import TheBadX module
-from . import TheBadX
+# Import TheBotX module
+from . import TheBotX
 
 @app.on_message(
     filters.command(
@@ -27,11 +27,11 @@ from . import TheBadX
             "cspam",
             "commonspam",
         ],
-        prefixes=TheBadX.handler,
+        prefixes=TheBotX.handler,
     )
 )
 async def spam_messages(client: Client, message: Message):
-    if await TheBadX.sudo.sudoFilter(message, 3):
+    if await TheBotX.sudo.sudoFilter(message, 3):
         return
     x = message.text[1:]
     if " " in x:
@@ -39,27 +39,27 @@ async def spam_messages(client: Client, message: Message):
     else:
         command = str(x)
     if command.lower() in ["spam", "bigspam"]:
-        await TheBadX.functions.start_spam(client, message, spam="spam")
+        await TheBotX.functions.start_spam(client, message, spam="spam")
 
     elif command.lower() in ["delayspam", "dspam"]:
-        await TheBadX.functions.start_spam(client, message, spam="delay")
+        await TheBotX.functions.start_spam(client, message, spam="delay")
 
     elif command.lower() in ["futurespam", "fspam", "timespam", "tspam"]:
-        await TheBadX.functions.start_spam(client, message, spam="future")
+        await TheBotX.functions.start_spam(client, message, spam="future")
 
     elif command.lower() in ["pornspam", "pspam"]:
-        await TheBadX.functions.start_spam(client, message, spam="porn")
+        await TheBotX.functions.start_spam(client, message, spam="porn")
 
     elif command.lower() in ["unlimitedspam", "uspam"]:
-        if await TheBadX.sudo.sudoFilter(message):
+        if await TheBotX.sudo.sudoFilter(message):
             return
-        await TheBadX.functions.start_spam(client, message, spam="loop")
+        await TheBotX.functions.start_spam(client, message, spam="loop")
 
     elif command.lower() in ["inlinespam", "ispam"]:
-        await TheBadX.functions.inline_spam(client, message)
+        await TheBotX.functions.inline_spam(client, message)
 
     elif command.lower() in ["commonspam", "cspam"]:
-        await TheBadX.functions.start_common_spam(client, message)
+        await TheBotX.functions.start_common_spam(client, message)
 
 @app.on_message(
     filters.command(
@@ -69,11 +69,11 @@ async def spam_messages(client: Client, message: Message):
             "message",
             "dmraid",
         ],
-        prefixes=TheBadX.handler
+        prefixes=TheBotX.handler
     )
 )
 async def direct_messages(client: Client, message: Message):
-    if await TheBadX.sudo.sudoFilter(message, 3):
+    if await TheBotX.sudo.sudoFilter(message, 3):
         return
     x = message.text[1:]
     if " " in x:
@@ -81,13 +81,13 @@ async def direct_messages(client: Client, message: Message):
     else:
         command = str(x)
     if command.lower() == "dmspam":
-        await TheBadX.functions.direct_messages(client, message, "spam")
+        await TheBotX.functions.direct_messages(client, message, "spam")
 
     elif command.lower() == "dmraid":
-        await TheBadX.functions.direct_messages(client, message, "raid")
+        await TheBotX.functions.direct_messages(client, message, "raid")
 
     elif command.lower() in ["dm", "message"]:
-        await TheBadX.functions.direct_messages(client, message, "message")
+        await TheBotX.functions.direct_messages(client, message, "message")
 
 @app.on_message(
     filters.command(
@@ -102,11 +102,11 @@ async def direct_messages(client: Client, message: Message):
             "dreplyraid",
             "drraid",
         ],
-        prefixes=TheBadX.handler
+        prefixes=TheBotX.handler
     )
 )
 async def raids(client: Client, message: Message):
-    if await TheBadX.sudo.sudoFilter(message, 3):
+    if await TheBotX.sudo.sudoFilter(message, 3):
         return
     x = message.text[1:]
     if " " in x:
@@ -114,43 +114,43 @@ async def raids(client: Client, message: Message):
     else:
         command = str(x)
     if command.lower() == "raid":
-        await TheBadX.functions.raid(client, message)
+        await TheBotX.functions.raid(client, message)
 
     elif command.lower() in ["multiraid", "mraid"]:
-        await TheBadX.functions.raid(client, message, multi=True)
+        await TheBotX.functions.raid(client, message, multi=True)
 
     elif command.lower() in ["replyraid", "rraid"]:
-        await TheBadX.functions.replyraid(client, message)
+        await TheBotX.functions.replyraid(client, message)
 
     elif command.lower() in ["areplyraid", "arraid"]:
-        await TheBadX.functions.replyraid(client, message, "enable")
+        await TheBotX.functions.replyraid(client, message, "enable")
 
     elif command.lower() in ["dreplyraid", "drraid"]:
-        await TheBadX.functions.replyraid(client, message, "disable")
+        await TheBotX.functions.replyraid(client, message, "disable")
 
 @app.on_message(
     filters.all
 )
 async def replayraid_watcher(_, message: Message):
-    if message.from_user.id in TheBadX.functions.raid_users:
-        await message.reply(random.choice(TheBadX.functions.raid_args))
+    if message.from_user.id in TheBotX.functions.raid_users:
+        await message.reply(random.choice(TheBotX.functions.raid_args))
 
 @app.on_message(
     filters.command("stop")
 )
 async def stop_uspam(_, message: Message):
-    if await TheBadX.sudo.sudoFilter(message):
+    if await TheBotX.sudo.sudoFilter(message):
         return
-    if message.chat.id in TheBadX.functions.unlimited:
-        TheBadX.functions.unlimited.remove(message.chat.id)
+    if message.chat.id in TheBotX.functions.unlimited:
+        TheBotX.functions.unlimited.remove(message.chat.id)
         await message.reply(f"__✅ Stopped Unlimited spam in {message.chat.title}!__")
-        TheBadX.activeTasks.pop(message.chat.id)
+        TheBotX.activeTasks.pop(message.chat.id)
     else:
         await message.reply(f"__❎ No any active task in {message.chat.title}.__")
 
 @app.on_callback_query(filters.regex("inline"))
 async def inlineSpamCB(_, callback: CallbackQuery):
     await callback.answer(
-        str(random.choice(TheBadX.functions.raid_args)),
+        str(random.choice(TheBotX.functions.raid_args)),
         show_alert=True,
     )

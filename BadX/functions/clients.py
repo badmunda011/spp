@@ -156,24 +156,28 @@ class BadX(Client):
         log_text += f"   ~ PyroGram: {self.versions['pyrogram']} \n"
         log_text += f"   ~ Python: {self.versions['python']}"
         try:
-            await self.BadX.send_photo(
-                self.loggerID,
-                "https://telegra.ph/file/3e28ce1ed1a89395ac07b.jpg",
-                caption=log_text,
-                parse_mode=ParseMode.MARKDOWN,
-                disable_notification=True,
-                reply_markup=InlineKeyboardMarkup(
-                    [
+            user = await self.BadX.get_me()
+            if user.username:
+                await self.BadX.send_photo(
+                    self.loggerID,
+                    "https://telegra.ph/file/3e28ce1ed1a89395ac07b.jpg",
+                    caption=log_text,
+                    parse_mode=ParseMode.MARKDOWN,
+                    disable_notification=True,
+                    reply_markup=InlineKeyboardMarkup(
                         [
-                            InlineKeyboardButton("Start me", url=f"https://t.me/{self.BadX.me.username}?start=start"),
-                        ],
-                        [
-                            InlineKeyboardButton("channel", url=f"https://t.me/{self.updateChannel}"),
-                            InlineKeyboardButton("support", url=f"https://t.me/{self.supportGroup}"),
-                        ],
-                    ]
-                ),
-            )
+                            [
+                                InlineKeyboardButton("Start me", url=f"https://t.me/{user.username}?start=start"),
+                            ],
+                            [
+                                InlineKeyboardButton("channel", url=f"https://t.me/{self.updateChannel}"),
+                                InlineKeyboardButton("support", url=f"https://t.me/{self.supportGroup}"),
+                            ],
+                        ]
+                    ),
+                )
+            else:
+                self.logs.error("Error: The bot does not have a username.")
         except Exception as e:
             self.logs.error(f"Error sending start message: {e}")
 
@@ -360,24 +364,28 @@ class BotX(Client):
         log_text += f"   ~ PyroGram: {self.versions['pyrogram']} \n"
         log_text += f"   ~ Python: {self.versions['python']}"
         try:
-            await self.BotX.send_photo(
-                self.loggerID,
-                "https://telegra.ph/file/3e28ce1ed1a89395ac07b.jpg",
-                caption=log_text,
-                parse_mode=ParseMode.MARKDOWN,
-                disable_notification=True,
-                reply_markup=InlineKeyboardMarkup(
-                    [
+            user = await self.BotX.get_me()
+            if user.username:
+                await self.BotX.send_photo(
+                    self.loggerID,
+                    "https://telegra.ph/file/3e28ce1ed1a89395ac07b.jpg",
+                    caption=log_text,
+                    parse_mode=ParseMode.MARKDOWN,
+                    disable_notification=True,
+                    reply_markup=InlineKeyboardMarkup(
                         [
-                            InlineKeyboardButton("Start me", url=f"https://t.me/{self.BotX.me.username}?start=start"),
-                        ],
-                        [
-                            InlineKeyboardButton("channel", url=f"https://t.me/{self.updateChannel}"),
-                            InlineKeyboardButton("support", url=f"https://t.me/{self.supportGroup}"),
-                        ],
-                    ]
-                ),
-            )
+                            [
+                                InlineKeyboardButton("Start me", url=f"https://t.me/{user.username}?start=start"),
+                            ],
+                            [
+                                InlineKeyboardButton("channel", url=f"https://t.me/{self.updateChannel}"),
+                                InlineKeyboardButton("support", url=f"https://t.me/{self.supportGroup}"),
+                            ],
+                        ]
+                    ),
+                )
+            else:
+                self.logs.error("Error: The bot does not have a username.")
         except Exception as e:
             self.logs.error(f"Error sending start message: {e}")
 

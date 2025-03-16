@@ -2,73 +2,41 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from . import TheBotX
 
-START_PIC = "https://telegra.ph/file/6482940720892cb9a4479.jpg"  # Default start picture
+START_PIC = "https://telegra.ph/file/6482940720892cb9a4479.jpg"  # Start image/video
 
 def get_start_buttons(username):
-    START_OP = [
+    return [
         [
-            InlineKeyboardButton(
-                text="🌸 ᴅᴇᴠᴇʟᴏᴘᴇʀ 🌸", url=f"https://t.me/ll_BAD_MUNDA_ll"
-            ),
-            InlineKeyboardButton(
-                text="💥 sᴜᴘᴘᴏʀᴛ 💥", url=f"https://t.me/PBX_CHAT"
-            ),
+            InlineKeyboardButton("🌸 ᴅᴇᴠᴇʟᴏᴘᴇʀ 🌸", url="https://t.me/ll_BAD_MUNDA_ll"),
+            InlineKeyboardButton("💥 sᴜᴘᴘᴏʀᴛ 💥", url="https://t.me/PBX_CHAT"),
         ],
         [
-            InlineKeyboardButton(
-                text="👻 ᴀᴅᴅ ᴍᴇ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ 👻",
-                url=f"https://t.me/{username}?startgroup=true",
-            ),
+            InlineKeyboardButton("👻 ᴀᴅᴅ ᴍᴇ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ 👻", url=f"https://t.me/{username}?startgroup=true"),
         ],
         [
-            InlineKeyboardButton(
-                text="📂 sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ 📂", url=f"https://t.me/HEROKUBIN_01/289"
-            ),
-            InlineKeyboardButton(
-                text="✨ ᴜᴘᴅᴀᴛᴇ ✨", url=f"https://t.me/HEROKUBIN_01"
-            ),
+            InlineKeyboardButton("📂 sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ 📂", url="https://t.me/HEROKUBIN_01/289"),
+            InlineKeyboardButton("✨ ᴜᴘᴅᴀᴛᴇ ✨", url="https://t.me/HEROKUBIN_01"),
         ],
     ]
-    return START_OP
 
 @Client.on_message(filters.command(["start"], prefixes=TheBotX.handler))
-async def _start(BadX: Client, message: Message):
-    global START_MESSAGE
-    my_detail = await BadX.get_me()
-    my_mention = my_detail.mention
-    START_MESSAGE = f"ʜᴇʏ💫 {message.from_user.mention}🌸\n✥ ɪ ᴀᴍ {my_mention}\n\n❖━━━━•❅•°•❈•°•❅•━━━━❖\n\nWelcome to the bot!"
+async def start_command(client: Client, message: Message):
+    bot_info = await client.get_me()
+    start_message = (
+        f"ʜᴇʏ💫 {message.from_user.mention} 🌸\n"
+        f"✥ ɪ ᴀᴍ {bot_info.mention}\n\n"
+        "❖━━━━•❅•°•❈•°•❅•━━━━❖\n\n"
+        "Welcome to the bot!"
+    )
 
-    reply_markup = InlineKeyboardMarkup(get_start_buttons(my_detail.username))
+    reply_markup = InlineKeyboardMarkup(get_start_buttons(bot_info.username))
 
-    for i in range(1, 26):
-        client = globals().get(f"Client{i}")
-        if client:
-            if ".jpg" in START_PIC or ".png" in START_PIC:
-                try:
-                    await client.send_photo(
-                        message.chat.id,
-                        START_PIC,
-                        caption=START_MESSAGE,
-                        reply_markup=reply_markup,
-                    )
-                except Exception as e:
-                    await message.reply_text(f"Error sending photo: {str(e)}")
-            elif ".mp4" in START_PIC.lower():
-                try:
-                    await client.send_video(
-                        message.chat.id,
-                        START_PIC,
-                        caption=START_MESSAGE,
-                        reply_markup=reply_markup,
-                    )
-                except Exception as e:
-                    await message.reply_text(f"Error sending video: {str(e)}")
-            else:
-                try:
-                    await client.send_message(
-                        message.chat.id,
-                        START_MESSAGE,
-                        reply_markup=reply_markup,
-                    )
-                except Exception as e:
-                    await message.reply_text(f"Error sending message: {str(e)}")
+    try:
+        if START_PIC.endswith((".jpg", ".png")):
+            await client.send_photo(message.chat.id, START_PIC, caption=start_message, reply_markup=reply_markup)
+        elif START_PIC.endswith(".mp4"):
+            await client.send_video(message.chat.id, START_PIC, caption=start_message, reply_markup=reply_markup)
+        else:
+            await client.send_message(message.chat.id, start_message, reply_markup=reply_markup)
+    except Exception as e:
+        await message.reply_text(f"⚠️ Error: {str(e)}")

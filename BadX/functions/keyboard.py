@@ -13,9 +13,6 @@ start_keyboard = ReplyKeyboardMarkup(
         [
             KeyboardButton("❓Help"),
             KeyboardButton("Other ↗️")
-        ],
-        [
-            KeyboardButton("Hacking ☠️")
         ]
     ],
     placeholder="Please Select",

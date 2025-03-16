@@ -82,34 +82,34 @@ async def get_client(_, message: Message):
     await wait.delete()
 
 @Client.on_message(
-    filters.private & filters.command("add")
+    filters.regex("➕ New Client") & filters.private #& filters.user(TheBadX.sudo.sudoUsers)
 )
-async def add_client(RiZoeL: Client, message: Message):
-    if await TheBadX.sudo.sudoFilter(message):
-        return
-    try:
-        session_string = message.command[1]
-    except IndexError:
-        await message.reply("__Invalid! Please provide a session string.__")
-        return
-
-    checking = await message.reply("__checking...__")
-
-    BadXClient = Client(
-        f"BadX-{session_string[:10]}",
-        api_id=API_ID,
-        api_hash=API_HASH,
-        session_string=session_string,
-        plugins=dict(root="BadX.module")
+async def new_session(_, message: Message):
+    await message.reply_text(
+        "**𝖮𝗄𝖺𝗒!** 𝖫𝖾𝗍'𝗌 𝗌𝖾𝗍𝗎𝗉 𝖺 𝗇𝖾𝗐 𝗌𝖾𝗌𝗌𝗂𝗈𝗇",
+        reply_markup=ReplyKeyboardRemove(),
     )
-    try:
-        await BadXClient.start()
-        TheBadX.clients.append(BadXClient)
-        TheBadX.database.addSession(BadXClient.me.id, session_string)
-        await message.reply(f"**✅ Wew, Client {BadXClient.me.mention} Started**")
-    except Exception as er:
-        await message.reply(f"**❎ Error:** {str(er)} \n\n __Report in @{TheBadX.supportGroup}__")
-    await checking.delete()
+
+    buttons = [
+        [
+            InlineKeyboardButton(
+                " ɢᴇɴʀᴀᴛᴇ ɴᴇᴡ ᴄʟɪᴇɴᴛ", 
+                web_app=WebAppInfo(url="https://telegram.tools/session-string-generator#pyrogram,user")
+            ),
+        ]
+    ]
+
+    await message.reply_text(
+        "👻 ɢᴇɴʀᴀᴛᴇ ᴘʏʀᴏɢʀᴀᴍ ꜱᴛʀɪɴɢ ꜱᴇꜱꜱɪᴏɴ ☠️ ",
+        reply_markup=InlineKeyboardMarkup(buttons),
+    )
+
+@Client.on_message(
+    filters.regex("➕ Add Client") & filters.private #& filters.user(TheBadX.sudo.sudoUsers)
+)
+async def session_add(_, message: Message):
+    await message.reply_text("/add {ᴘᴀsᴛᴇ ʏᴏᴜʀ ᴘʏ2 sᴇssɪᴏɴ} ✓ ❤️")  
+    
 
 @Client.on_message(
     filters.regex("Remove Client ➖") & filters.private #& filters.user(TheBadX.sudo.sudoUsers)
@@ -368,14 +368,4 @@ async def clientCallbacks(_, callback: CallbackQuery):
                     )
                 )
             except:
-                await callback.message.reply_text(
-                    otp_text,
-                    reply_markup=InlineKeyboardMarkup(
-                        [
-                            [
-                                InlineKeyboardButton("🔙", "client:back:access")
-                            ]
-                        ]
-                    )
-                )
-                await callback.message.delete()
+                await callback.

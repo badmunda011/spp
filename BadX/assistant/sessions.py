@@ -223,7 +223,7 @@ async def session_add(_, message: Message):
     filters.regex("➕ Add Bot Client") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)
 )
 async def session_add(_, message: Message):
-    await message.reply_text("/add {ᴘᴀsᴛᴇ ʏᴏᴜʀ ʙᴏᴛ ᴛᴏᴋᴇɴ} ✓ ❤️")
+    await message.reply_text("/addbot {ᴘᴀsᴛᴇ ʏᴏᴜʀ ʙᴏᴛ ᴛᴏᴋᴇɴ} ✓ ❤️")
 
 @Client.on_message(
     filters.regex("Remove Client ➖") & filters.private  # & filters.user(TheBadX.sudo.sudoUsers)

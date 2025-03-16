@@ -156,7 +156,7 @@ async def add_bot_client(RiZoeL: Client, message: Message):
         api_id=API_ID,
         api_hash=API_HASH,
         bot_token=bot_token,
-        plugins=dict(root="BadX.module")
+        plugins=dict(root="BadX.module2")
     )
     try:
         await BadXBot.start()

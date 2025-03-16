@@ -34,6 +34,10 @@ manage_clients_keyboard = ReplyKeyboardMarkup(
         [
             KeyboardButton("🔐 Get Access Of Client")
         ],
+         [
+            KeyboardButton("➕ Add Bot Client"),
+            KeyboardButton("Remove Bot Client ➖")
+        ],
         [
             KeyboardButton("Home 🏠")
         ]

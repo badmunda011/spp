@@ -82,163 +82,34 @@ async def get_client(_, message: Message):
     await wait.delete()
 
 @Client.on_message(
-    filters.regex("➕ Add Client") & filters.private #& filters.user(TheBadX.sudo.sudoUsers)
+    filters.private & filters.command("add")
 )
 async def add_client(RiZoeL: Client, message: Message):
     if await TheBadX.sudo.sudoFilter(message):
         return
-    clientString: Message = await RiZoeL.ask(
-        message.from_user.id,
-        "**🔸 Please Share Phone number or Bot token to start your client!** __(Type /cancel to cancel the process)__",
-        filters=filters.text,
-        timeout=120,
-        reply_markup=ReplyKeyboardRemove(),
-    )
-    if clientString.text.startswith("/") or " " in clientString.text:
-        await clientString.reply("__Process cancelled ❌__")
-        return
-    if (clientString.text.startswith("+") and clientString.text.split("+")[1].isnumeric()) or clientString.text.isnumeric():
-        if clientString.text.startswith("+"):
-            phone_number = int(clientString.text.split("+")[1])
-        else:
-            phone_number = int(clientString.text)
-        is_bot = False
-    elif ":" in clientString.text and clientString.text.split(":")[0].isnumeric():
-        bot_token = str(clientString.text)
-        bot_id = int(clientString.text.split(":")[0])
-        phone_number = None
-        is_bot = True
-    else:
-        await message.reply("__❌ Invalid please share bot token or phone number (phone number must be in digits & should contain country code.)!__")
+    try:
+        session_string = message.command[1]
+    except IndexError:
+        await message.reply("__Invalid! Please provide a session string.__")
         return
 
     checking = await message.reply("__checking...__")
 
-    if is_bot:
-        BadXClient = Client(
-            f"BadX-{bot_id}",
-            api_id=API_ID,
-            api_hash=API_HASH,
-            bot_token=bot_token,
-            plugins=dict(root="BadX.module")
-            )
-        try:
-            await BadXClient.start()
-            TheBadX.clients.append(BadXClient)
-            TheBadX.database.addSession(BadXClient.me.id, bot_token)
-            await message.reply(f"**✅ Wew, Client {BadXClient.me.mention} Started**")
-        except Exception as er:
-            await message.reply(f"**❎ Error:** {str(er)} \n\n __Report in @{TheBadX.supportGroup}__")
-        await checking.delete()
-
-    else:
-        try:
-            TempClient = Client(
-                f"Temp-{phone_number}",
-                api_id=API_ID,
-                api_hash=API_HASH,
-                in_memory=True,
-            )
-            await TempClient.connect()
-
-            try:
-                code = await TempClient.send_code(str(phone_number))
-            except PhoneNumberInvalid:
-                await message.reply(f"❎ Phone number {phone_number} is invalid!")
-                await checking.delete()
-                return
-            except Exception as err:
-                TheBadX.logs.info(str(err))
-                await message.reply(f"**❎ Error:** {str(err)} \n\n__Report in @{TheBadX.supportGroup}__")
-                await checking.delete()
-                return
-            try:
-                await checking.delete()
-                askOTP: Message = await RiZoeL.ask(
-                    message.from_user.id,
-                    f"🔸 Enter the OTP sent to your telegram account by separating every number with a space. (time- 10mins) \n\n**E.g:** `2 4 1 7 4`\n\n__Send /cancel to cancel the operation.__",
-                    filters=filters.text,
-                    timeout=600,
-                )
-                if askOTP.text.startswith("/"):
-                    await askOTP.reply("__Process cancelled ❌__")
-                    return
-
-                otp = askOTP.text.replace(" ", "")
-            except TimeoutError:
-                await message.reply("**❕TimeOut! Time limit reached of 10 minutes")
-                return
-
-            try:
-                await TempClient.sign_in(str(phone_number), code.phone_code_hash, otp)
-                password = None
-            except PhoneCodeInvalid:
-                await message.reply(f"__{otp} is invalid OTP ❌__")
-                return
-            except PhoneCodeExpired:
-                await message.reply(f"__OTP is Expired❕__")
-            except SessionPasswordNeeded:
-                retries = 0
-                while True:
-                    try:
-                        if retries >= 3:
-                            await message.reply("__Oops❕ I think you don't know your password let's quite__")
-                            return
-                        two_step_pass: Message = await RiZoeL.ask(
-                            message.from_user.id,
-                            "🔸 Enter your two step verification password: (time- 5mins)\n\n__Send /cancel to cancel the operation.__",
-                            filters=filters.text,
-                            timeout=120,
-                        )
-                        if two_step_pass.text.startswith("/"):
-                            await askOTP.reply("__Process cancelled ❌__")
-                            return
-                    except TimeoutError:
-                        await message.reply("**❎ TimeOut! Time limit reached of 5 minutes")
-                        return
-                    try:
-                        password = two_step_pass.text
-                        await TempClient.check_password(password=password)
-                        break
-                    except PasswordHashInvalid:
-                        await two_step_pass.reply("__❌ Invalid Password Provided__")
-                        retries += 1
-                        continue
-
-            process = await message.reply("__processing....__")
-            string_session = await TempClient.export_session_string()
-            await TempClient.disconnect()
-            BadXClient = Client(
-                f"BadX-{phone_number}",
-                api_id=API_ID,
-                api_hash=API_HASH,
-                session_string=string_session,
-                plugins=dict(root="BadX.module")
-            )
-            await BadXClient.start()
-            TheBadX.database.addSession(phone_number, string_session, password)
-            TheBadX.clients.append(BadXClient)
-            try:
-                await BadXClient.join_chat(TheBadX.updateChannel)
-                await BadXClient.join_chat(TheBadX.supportGroup)
-                try:
-                    await BadXClient.send_message(RiZoeL.me.username, "/start")
-                except:
-                    pass
-            except Exception:
-                pass
-
-            if await TheBadX.validateLogger(BadXClient):
-                log = await message.reply("__✅ Joined Logger__")
-            else:
-                log = await message.reply("**🔹Note:** __Add Client in logger group!__")
-            await asyncio.sleep(2)
-            await message.reply(f"**✅ BadX Client started on {BadXClient.me.mention}, 🔻Phone Number: {phone_number}**")
-            await process.delete()
-            await log.delete()
-        except Exception as erorr:
-            await message.reply(f"**❎ Error:** {str(erorr)} \n\n __Report in @{TheBadX.supportGroup}__")
-
+    BadXClient = Client(
+        f"BadX-{session_string[:10]}",
+        api_id=API_ID,
+        api_hash=API_HASH,
+        session_string=session_string,
+        plugins=dict(root="BadX.module")
+    )
+    try:
+        await BadXClient.start()
+        TheBadX.clients.append(BadXClient)
+        TheBadX.database.addSession(BadXClient.me.id, session_string)
+        await message.reply(f"**✅ Wew, Client {BadXClient.me.mention} Started**")
+    except Exception as er:
+        await message.reply(f"**❎ Error:** {str(er)} \n\n __Report in @{TheBadX.supportGroup}__")
+    await checking.delete()
 
 @Client.on_message(
     filters.regex("Remove Client ➖") & filters.private #& filters.user(TheBadX.sudo.sudoUsers)

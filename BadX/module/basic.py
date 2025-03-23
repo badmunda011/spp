@@ -3,7 +3,7 @@ import time
 import asyncio
 
 from pyrogram import Client, filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultPhoto
 from pyrogram.enums import ChatType, ChatMemberStatus
 
 from . import TheBadX
@@ -15,8 +15,6 @@ async def ping(_, message: Message):
     if await TheBadX.sudo.sudoFilter(message, 3):
         return
     start = datetime.datetime.now()
-    #u_time = int(int(time.time()) - int(TheBadX.startTime))
-    #uptime = await TheBadX.functions.get_time(time=u_time)
     pong_msg = await message.reply("**Pong !!**")
     end = datetime.datetime.now()
     ms = (end-start).microseconds / 1000
@@ -113,3 +111,36 @@ async def stats(BadX: Client, message: Message):
     stats += f"Time Taken `{ms}secs` \n"
     stats += f"© @{TheBadX.updateChannel}"
     await TheBadX.functions.delete_reply(message, wait, stats)
+
+@Client.on_inline_query(filters.regex("ping_menu"))
+async def inline_ping(client: Client, inline_query):
+    img = await db.get_env(ENV.ping_pic)
+    if not img:
+        img = "https://telegra.ph/file/14166208a7bf871cb0aca.jpg"  # Default image
+
+    uptime = readable_time(time.time() - START_TIME)
+    
+    # Speed calculation ka seedha tareeka, bas inline query receive hone ka time le rahe hain
+    start_time = time.time()
+    speed = round(time.time() - start_time, 3)
+
+    caption = await ping_template(speed, uptime, inline_query.from_user.mention)
+
+    buttons = [
+        [
+            InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ", url="https://t.me/PBX_CHAT"),
+            InlineKeyboardButton("ᴜᴘᴅᴀᴛᴇs", url="https://t.me/HEROKUBIN_01"),
+        ],
+    ]
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    results = [
+        InlineQueryResultPhoto(
+            photo_url=img,
+            thumb_url=img,
+            caption=caption,
+            reply_markup=reply_markup,
+        )
+    ]
+
+    await inline_query.answer(results, cache_time=0)

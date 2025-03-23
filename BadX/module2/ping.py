@@ -35,7 +35,7 @@ async def alive(BadX: Client, message: Message):
     await TheBadX.functions.send_alive(BadX, message)
 
 @Client.on_message(
-    filters.command(["help", "restart", "reboot"], prefixes=TheBadX.handler) #& filters.user(TheBadX.sudo.sudoUsers)
+    filters.command(["restart", "reboot"], prefixes=TheBadX.handler) #& filters.user(TheBadX.sudo.sudoUsers)
 )
 async def help_reboot(_, message: Message):
     if await TheBadX.sudo.sudoFilter(message, 3):

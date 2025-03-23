@@ -7,4 +7,4 @@ from pyrogram import Client, filters
 async def hi(_, message):
     if await TheBadX.sudo.sudoFilter(message, 3): #sudo filter
         return
-    await message.reply("Hello")
+    await message.reply("processing..")
